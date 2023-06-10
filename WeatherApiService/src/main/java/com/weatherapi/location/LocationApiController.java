@@ -1,11 +1,13 @@
 package com.weatherapi.location;
 
-import java.net.URI;
-import java.util.List;
+import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,23 +24,41 @@ public class LocationApiController {
 		this.service = service;
 	}
 	
-	@PostMapping
-	public ResponseEntity<Location> addLocation(Location location){
-		Location addedLocation = service.add(location);
-		URI uri = URI.create("/v1/locations/" + location.getCode());
-		
-		return ResponseEntity.created(uri).body(addedLocation);
-	}
+	public ResponseEntity<Location> addLocation(@RequestBody @Valid Location location) {
+		return null;}
 	
-	@GetMapping
 	public ResponseEntity<?> listLocations() {
-		List<Location> locations  = service.list();
+		return null;}
+	
+	@GetMapping("/{code}")
+	public ResponseEntity<?> getLocation(@PathVariable("code") String code) {
+		Location location = service.get(code);
 		
-		if (locations.isEmpty()) {
-			return ResponseEntity.noContent().build();
+		if (location == null) {
+			return ResponseEntity.notFound().build();
 		}
 		
-		return ResponseEntity.ok(locations);
+		return ResponseEntity.ok(location);
+	}
+	
+	@PutMapping
+	public ResponseEntity<?> updateLocation(@RequestBody @Valid Location location) {
+		try {
+			Location updatedLocation = service.update(location);
+			return ResponseEntity.ok(updatedLocation);
+		} catch (LocationNotFoundException e) {
+			return ResponseEntity.notFound().build();
+		}
+	}
+	
+	@DeleteMapping("/{code}")
+	public ResponseEntity<?> deleteLocation(@PathVariable("code") String code) {
+		try {
+			service.delete(code);
+			return ResponseEntity.noContent().build();
+		} catch (LocationNotFoundException e) {
+			return ResponseEntity.notFound().build();
+		}
 	}
 }
  
