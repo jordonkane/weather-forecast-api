@@ -23,24 +23,26 @@ public class LocationApiController {
 		super();
 		this.service = service;
 	}
-	
+
 	public ResponseEntity<Location> addLocation(@RequestBody @Valid Location location) {
-		return null;}
-	
+		return null;
+	}
+
 	public ResponseEntity<?> listLocations() {
-		return null;}
-	
+		return null;
+	}
+
 	@GetMapping("/{code}")
 	public ResponseEntity<?> getLocation(@PathVariable("code") String code) {
 		Location location = service.get(code);
-		
+
 		if (location == null) {
 			return ResponseEntity.notFound().build();
 		}
-		
+
 		return ResponseEntity.ok(location);
 	}
-	
+
 	@PutMapping
 	public ResponseEntity<?> updateLocation(@RequestBody @Valid Location location) {
 		try {
@@ -50,7 +52,7 @@ public class LocationApiController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-	
+
 	@DeleteMapping("/{code}")
 	public ResponseEntity<?> deleteLocation(@PathVariable("code") String code) {
 		try {
@@ -61,4 +63,3 @@ public class LocationApiController {
 		}
 	}
 }
- 
